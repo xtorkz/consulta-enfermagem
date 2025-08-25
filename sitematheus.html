@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processo de Enfermagem na Atenção Básica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.2s;
+        }
+        .list-item:hover {
+            background-color: #f3f4f6;
+        }
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .remove-btn:hover {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        /* Estilos para o Autocomplete */
+        .autocomplete-suggestions {
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            position: absolute;
+            background-color: white;
+            z-index: 99;
+            width: 100%;
+            border-radius: 0 0 0.5rem 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .autocomplete-suggestion {
+            padding: 0.75rem;
+            cursor: pointer;
+        }
+        .autocomplete-suggestion:hover {
+            background-color: #f3f4f6;
+        }
+        /* Estilo para a área de impressão */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-area, #print-area * {
+                visibility: visible;
+            }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-cyan-700">Processo de Enfermagem</h1>
+            <p class="text-gray-600 mt-2">Ferramenta de apoio para a Consulta de Enfermagem na Atenção Básica</p>
+            <p class="text-sm text-gray-500 mt-2">Desenvolvido por Matheus Amaury &copy; - Aluno de Enfermagem da Faculdade Uniasselvi Polo Registro-SP.</p>
+        </header>
+
+        <main class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <!-- Navegação em Abas -->
+            <div class="border-b border-gray-200 mb-6 no-print">
+                <nav class="-mb-px flex space-x-4 overflow-x-auto" aria-label="Tabs">
+                    <button onclick="changeTab(0)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-cyan-500 text-cyan-600">
+                        1. Identificação
+                    </button>
+                    <button onclick="changeTab(1)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        2. Coleta de Dados
+                    </button>
+                    <button onclick="changeTab(2)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        3. Diagnóstico
+                    </button>
+                    <button onclick="changeTab(3)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        4. Planejamento
+                    </button>
+                    <button onclick="changeTab(4)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        5. Implementação
+                    </button>
+                    <button onclick="changeTab(5)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        6. Avaliação
+                    </button>
+                    <button onclick="changeTab(6)" class="tab-btn whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        7. SOAP
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Conteúdo das Abas -->
+            <div id="tab-container">
+                <!-- 1. Identificação -->
+                <div class="tab-content active">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">1. Identificação do Paciente</h2>
+                    <div class="space-y-4">
+                        <div class="grid md:grid-cols-5 gap-4">
+                            <div class="md:col-span-3">
+                                <label for="nome-paciente" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo</label>
+                                <input type="text" id="nome-paciente" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500">
+                            </div>
+                            <div>
+                                <label for="idade-paciente" class="block text-sm font-medium text-gray-700 mb-1">Idade</label>
+                                <input type="number" id="idade-paciente" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500">
+                            </div>
+                            <div>
+                                <label for="sexo-paciente" class="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
+                                <select id="sexo-paciente" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500 h-full">
+                                    <option value="">Selecione</option>
+                                    <option value="Feminino">Feminino</option>
+                                    <option value="Masculino">Masculino</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Doenças de Base</label>
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Hipertensão Arterial Sistêmica (HAS)" class="rounded text-cyan-600 focus:ring-cyan-500"><span>HAS</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Diabetes Mellitus (DM)" class="rounded text-cyan-600 focus:ring-cyan-500"><span>Diabetes</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Doença Pulmonar Obstrutiva Crônica (DPOC)" class="rounded text-cyan-600 focus:ring-cyan-500"><span>DPOC</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Cardiopatia" class="rounded text-cyan-600 focus:ring-cyan-500"><span>Cardiopatia</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Asma" class="rounded text-cyan-600 focus:ring-cyan-500"><span>Asma</span></label>
+                                <label class="flex items-center space-x-2"><input type="checkbox" name="doenca-base" value="Dislipidemia" class="rounded text-cyan-600 focus:ring-cyan-500"><span>Dislipidemia</span></label>
+                            </div>
+                            <input type="text" id="outras-doencas" class="mt-2 w-full p-2 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Outras...">
+                        </div>
+                        <div>
+                            <label for="medicacoes-continuas" class="block text-sm font-medium text-gray-700 mb-1">Medicações de Uso Contínuo</label>
+                            <textarea id="medicacoes-continuas" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Listar medicamentos, doses e horários."></textarea>
+                        </div>
+                        <div>
+                            <label for="alergias" class="block text-sm font-medium text-gray-700 mb-1">Alergias</label>
+                            <textarea id="alergias" rows="2" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Descrever alergias medicamentosas ou outras. Se não houver, escrever 'Nega alergias'."></textarea>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Fumante?</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center space-x-2"><input type="radio" name="fumante" value="Sim" class="text-cyan-600 focus:ring-cyan-500"><span>Sim</span></label>
+                                    <label class="flex items-center space-x-2"><input type="radio" name="fumante" value="Não" class="text-cyan-600 focus:ring-cyan-500"><span>Não</span></label>
+                                </div>
+                            </div>
+                             <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Etilista?</label>
+                                <div class="flex items-center space-x-4">
+                                    <label class="flex items-center space-x-2"><input type="radio" name="etilista" value="Sim" class="text-cyan-600 focus:ring-cyan-500"><span>Sim</span></label>
+                                    <label class="flex items-center space-x-2"><input type="radio" name="etilista" value="Não" class="text-cyan-600 focus:ring-cyan-500"><span>Não</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Coleta de Dados -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">2. Coleta de Dados (Histórico de Enfermagem)</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="dados-subjetivos" class="block text-sm font-medium text-gray-700 mb-1">Dados Subjetivos (Queixa principal, histórico da doença atual)</label>
+                            <textarea id="dados-subjetivos" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Queixa principal. Histórico da doença atual. Avaliar: Alimentação, padrão de sono, prática de atividade física, atividades diárias, situação vacinal."></textarea>
+                        </div>
+                        <div>
+                            <label for="dados-objetivos" class="block text-sm font-medium text-gray-700 mb-1">Dados Objetivos (Exame físico, sinais vitais, resultados de exames)</label>
+                            <textarea id="dados-objetivos" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Sinais vitais (PA, FC, FR, T, SpO2, Glicemia). Exame físico geral e específico. Avaliar pele, mucosas, ausculta pulmonar/cardíaca. Em diabéticos, inspecionar membros inferiores (MMII)."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Diagnóstico de Enfermagem -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">3. Diagnóstico de Enfermagem</h2>
+                    <div class="relative">
+                        <div class="flex gap-2 mb-4">
+                            <div class="relative flex-grow">
+                                <input type="text" id="input-diagnostico" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Digite para buscar um diagnóstico NANDA..." autocomplete="off">
+                                <div id="autocomplete-diagnostico" class="autocomplete-suggestions hidden"></div>
+                            </div>
+                            <button onclick="adicionarItem('diagnostico')" class="bg-cyan-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors">Adicionar</button>
+                        </div>
+                    </div>
+                    <ul id="lista-diagnostico" class="space-y-2"></ul>
+                </div>
+
+                <!-- 4. Planejamento de Enfermagem -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">4. Planejamento de Enfermagem</h2>
+                    <p class="text-sm text-gray-500 mb-4">Defina os resultados esperados (Metas) e as intervenções de enfermagem.</p>
+                    <div class="grid md:grid-cols-2 gap-12 pt-4">
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-600">Resultados Esperados (Metas)</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="input-resultado" class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Defina metas mensuráveis. Ex: Paciente apresentará níveis glicêmicos dentro da normalidade até o próximo retorno.">
+                                <button onclick="adicionarItem('resultado')" class="bg-cyan-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors">Adicionar</button>
+                            </div>
+                            <ul id="lista-resultado" class="space-y-2"></ul>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2 text-gray-600">Intervenções de Enfermagem</h3>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="input-intervencao" class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Descreva as ações. Ex: Orientar sobre dieta hipossódica; Encaminhar para grupo de caminhada; Realizar curativo.">
+                                <button onclick="adicionarItem('intervencao')" class="bg-cyan-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors">Adicionar</button>
+                            </div>
+                            <ul id="lista-intervencao" class="space-y-2"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Implementação -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">5. Implementação</h2>
+                    <div>
+                        <label for="implementacao-resumo" class="block text-sm font-medium text-gray-700 mb-1">Resumo das ações de enfermagem realizadas</label>
+                        <textarea id="implementacao-resumo" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Registre o que foi feito. Ex: Realizada orientação sobre a importância da adesão ao tratamento e dieta. Aferida glicemia capilar. Agendado retorno em 30 dias."></textarea>
+                    </div>
+                </div>
+
+                <!-- 6. Avaliação -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">6. Avaliação (Evolução de Enfermagem)</h2>
+                     <div>
+                        <label for="avaliacao-resultado" class="block text-sm font-medium text-gray-700 mb-1">Avaliação dos resultados e evolução do paciente</label>
+                        <textarea id="avaliacao-resultado" rows="8" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Compare com os resultados esperados. Ex: Paciente retornou com diário de glicemia preenchido e níveis mais estáveis. Refere ter iniciado caminhadas 3x/semana. Meta parcialmente atingida."></textarea>
+                    </div>
+                </div>
+                
+                <!-- 7. SOAP -->
+                <div class="tab-content">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-700">7. SOAP (Registro Clínico Orientado a Problemas)</h2>
+                    <p class="text-sm text-gray-500 mb-6">Utilize este espaço para um registro estruturado, comum no prontuário eletrônico (PEC e-SUS).</p>
+                    <div class="space-y-6">
+                        <div>
+                            <label for="soap-s" class="block text-sm font-bold text-gray-800 mb-1">S - Subjetivo</label>
+                            <textarea id="soap-s" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Descrição da queixa principal e sintomas relatados pelo paciente. Ex: 'Estou com dor de cabeça há dois dias, parece que minha cabeça vai explodir'."></textarea>
+                        </div>
+                        <div>
+                            <label for="soap-o" class="block text-sm font-bold text-gray-800 mb-1">O - Objetivo</label>
+                            <textarea id="soap-o" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Dados observáveis e mensuráveis. Sinais vitais, achados do exame físico, resultados de exames. Ex: PA 150x95 mmHg, FC 88 bpm, paciente orientado, corado, hidratado."></textarea>
+                        </div>
+                        <div>
+                            <label for="soap-a" class="block text-sm font-bold text-gray-800 mb-1">A - Avaliação</label>
+                            <textarea id="soap-a" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Análise dos dados subjetivos e objetivos, resultando nos diagnósticos de enfermagem ou problemas identificados. Ex: Dor de cabeça aguda; Risco de Glicemia instável."></textarea>
+                        </div>
+                        <div>
+                            <label for="soap-p" class="block text-sm font-bold text-gray-800 mb-1">P - Plano</label>
+                            <textarea id="soap-p" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-cyan-500 focus:border-cyan-500" placeholder="Condutas e intervenções a serem realizadas. Ex: Orientar sobre uso de analgésico se necessário; Aferir PA em 3 dias; Agendar consulta médica; Encaminhar para grupo de hipertensos."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="mt-8 pt-6 border-t border-gray-200 flex justify-end gap-3 no-print">
+                <button onclick="limparFormulario()" class="bg-gray-200 text-gray-700 font-semibold px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors">Limpar Tudo</button>
+                <button onclick="gerarRelatorio()" class="bg-green-600 text-white font-semibold px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">Gerar Relatório</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Área de Impressão (invisível até ser chamada) -->
+    <div id="print-area" class="p-8 hidden"></div>
+
+
+    <script>
+        // --- BASE DE DADOS NANDA (2020-2023) ---
+        const nandaDiagnoses = [
+            "Aceitação da condição de saúde prejudicada", "Adaptação prejudicada", "Amamentação eficaz", "Amamentação ineficaz", "Amamentação interrompida",
+            "Angústia espiritual", "Ansiedade", "Ansiedade relacionada à morte", "Aspiração, risco de", "Atividade de lazer deficiente",
+            "Atraso no desenvolvimento", "Autocontrole ineficaz da saúde", "Autocuidado deficiente para alimentação",
+            "Autocuidado deficiente para banho", "Autocuidado deficiente para higiene íntima", "Autocuidado deficiente para vestir-se",
+            "Autonegligência", "Baixa autoestima crônica", "Baixa autoestima situacional", "Bem-estar espiritual prejudicado",
+            "Campo de energia desequilibrado", "Cansaço do papel de cuidador", "Cansaço do papel de cuidador, risco de",
+            "Comportamento de saúde propenso a risco", "Comunicação verbal prejudicada", "Condição de saúde instável",
+            "Conforto prejudicado", "Confusão aguda", "Confusão aguda, risco de", "Confusão crônica", "Conhecimento deficiente",
+            "Constipação", "Constipação funcional crônica", "Constipação, risco de", "Contaminação", "Contaminação, risco de",
+            "Controle de impulso ineficaz", "Controle emocional instável", "Coping defensivo", "Coping familiar comprometido",
+            "Coping familiar incapacitado", "Coping ineficaz", "Coping ineficaz da comunidade", "Coping, disposição para melhora do",
+            "Crescimento desproporcional", "Crescimento desproporcional, risco de", "Débito cardíaco diminuído",
+            "Deambulação prejudicada", "Decisão sobre a saúde, disposição para melhora da", "Deglutição prejudicada",
+            "Dentadura prejudicada", "Desesperança", "Desobstrução ineficaz de vias aéreas", "Diarreia", "Dignidade humana em risco",
+            "Disfunção do processo de luto", "Disfunção do processo de luto, risco de", "Disfunção motora gastrointestinal",
+            "Disfunção motora gastrointestinal, risco de", "Disfunção neurovascular periférica, risco de", "Disfunção sexual",
+            "Disposição para melhora da alfabetização em saúde", "Disposição para melhora da amamentação",
+            "Disposição para melhora da comunicação", "Disposição para melhora da esperança", "Disposição para melhora da imunização",
+            "Disposição para melhora da nutrição", "Disposição para melhora do autocuidado", "Disposição para melhora do conhecimento",
+            "Disposição para melhora do coping", "Disposição para melhora do coping da comunidade", "Disposição para melhora do coping familiar",
+            "Disposição para melhora do poder", "Disposição para melhora do processo de maternidade",
+            "Disposição para melhora do relacionamento", "Disposição para melhora do sono", "Disposição para melhora dos processos familiares",
+            "Disreflexia autonômica", "Disreflexia autonômica, risco de", "Distúrbio na imagem corporal", "Distúrbio no padrão de sono",
+            "Dor aguda", "Dor crônica", "Dor de parto", "Eliminação urinária prejudicada", "Enfrentamento familiar incapacitado",
+            "Equilíbrio de líquidos, disposição para melhora do", "Estilo de vida sedentário", "Fadiga", "Falta de adesão",
+            "Glicemia instável", "Glicemia instável, risco de", "Hipertermia", "Hipotermia", "Icterícia neonatal",
+            "Icterícia neonatal, risco de", "Identidade pessoal perturbada", "Identidade pessoal perturbada, risco de",
+            "Incontinência fecal", "Incontinência urinária de esforço", "Incontinência urinária de urgência",
+            "Incontinência urinária funcional", "Incontinência urinária mista", "Incontinência urinária por transbordamento",
+            "Incontinência urinária, risco de", "Infecção, risco de", "Insônia", "Integridade da pele prejudicada",
+            "Integridade da pele prejudicada, risco de", "Integridade tissular prejudicada", "Interação social prejudicada",
+            "Intolerância à atividade", "Intolerância à atividade, risco de", "Intoxicação, risco de", "Isolamento social",
+            "Lesão por pressão em criança", "Lesão por pressão em criança, risco de", "Lesão por pressão no adulto",
+            "Lesão por pressão no adulto, risco de", "Lesão, risco de", "Luto", "Luto complicado", "Luto complicado, risco de",
+            "Manutenção do lar prejudicada", "Medo", "Memória prejudicada", "Mobilidade com cadeira de rodas prejudicada",
+            "Mobilidade física prejudicada", "Mobilidade no leito prejudicada", "Motilidade gastrointestinal disfuncional",
+            "Motilidade gastrointestinal disfuncional, risco de", "Mucosa oral prejudicada", "Mutilação genital feminina, risco de",
+            "Náusea", "Negação ineficaz", "Nutrição desequilibrada: menor do que as necessidades corporais",
+            "Nutrição desequilibrada: maior do que as necessidades corporais", "Obesidade", "Padrão respiratório ineficaz",
+            "Padrão sexual ineficaz", "Paternidade prejudicada", "Paternidade prejudicada, risco de", "Poder, disposição para melhora do",
+            "Processo de maternidade prejudicado", "Processo de maternidade prejudicado, risco de", "Processos familiares disfuncionais",
+            "Processos familiares interrompidos", "Proteção ineficaz", "Quedas, risco de", "Recuperação cirúrgica retardada",
+            "Recuperação cirúrgica retardada, risco de", "Relacionamento ineficaz", "Relacionamento ineficaz, risco de",
+            "Religiosidade prejudicada", "Religiosidade prejudicada, risco de", "Religiosidade, disposição para melhora da",
+            "Resposta alérgica ao látex", "Resposta alérgica ao látex, risco de", "Resposta de ventilação mecânica disfuncional",
+            "Retenção urinária", "Risco de choque", "Risco de comprometimento da função cardiovascular",
+            "Risco de comprometimento da função hepática", "Risco de desequilíbrio eletrolítico", "Risco de desequilíbrio no volume de líquidos",
+            "Risco de sangramento", "Risco de solidão", "Risco de sofrimento espiritual", "Risco de suicídio", "Risco de trauma físico",
+            "Risco de trombose", "Risco de úlcera por pressão", "Risco de violência direcionada a outros",
+            "Risco de violência direcionada a si mesmo", "Sentimento de impotência", "Sentimento de impotência, risco de",
+            "Síndrome da dor crônica", "Síndrome da fragilidade do idoso", "Síndrome da interpretação ambiental prejudicada",
+            "Síndrome da morte súbita infantil, risco de", "Síndrome do estresse por mudança", "Síndrome do estresse por mudança, risco de",
+            "Síndrome do trauma de estupro", "Sofrimento espiritual", "Sofrimento moral", "Solidão, risco de", "Sonolência",
+            "Suicídio, risco de", "Temperatura corporal desequilibrada, risco de", "Termorregulação ineficaz",
+            "Transferência prejudicada", "Trauma vascular, risco de", "Troca de gases prejudicada", "Ventilação espontânea prejudicada",
+            "Vínculo prejudicado", "Vínculo prejudicado, risco de", "Violência no relacionamento", "Volume de líquidos deficiente",
+            "Volume de líquidos deficiente, risco de", "Volume de líquidos excessivo"
+        ];
+
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+
+        function changeTab(index) {
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('border-cyan-500', 'text-cyan-600');
+                    tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    contents[i].classList.add('active');
+                } else {
+                    tab.classList.remove('border-cyan-500', 'text-cyan-600');
+                    tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    contents[i].classList.remove('active');
+                }
+            });
+        }
+
+        function adicionarItem(tipo) {
+            const input = document.getElementById(`input-${tipo}`);
+            const lista = document.getElementById(`lista-${tipo}`);
+            const texto = input.value.trim();
+
+            if (texto === '') {
+                input.classList.add('border-red-500');
+                setTimeout(() => input.classList.remove('border-red-500'), 2000);
+                return;
+            }
+
+            const listItem = document.createElement('li');
+            listItem.className = 'list-item bg-gray-50';
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = texto;
+            textSpan.className = 'flex-grow';
+            
+            const removeButton = document.createElement('button');
+            removeButton.textContent = '✖';
+            removeButton.className = 'remove-btn';
+            removeButton.onclick = () => {
+                listItem.remove();
+            };
+
+            listItem.appendChild(textSpan);
+            listItem.appendChild(removeButton);
+            lista.appendChild(listItem);
+            input.value = '';
+            input.focus();
+            
+            if (tipo === 'diagnostico') {
+                document.getElementById('autocomplete-diagnostico').classList.add('hidden');
+            }
+        }
+        
+        const inputDiagnostico = document.getElementById('input-diagnostico');
+        const autocompleteDiagnostico = document.getElementById('autocomplete-diagnostico');
+
+        inputDiagnostico.addEventListener('keyup', () => {
+            const inputText = inputDiagnostico.value.toLowerCase();
+            autocompleteDiagnostico.innerHTML = '';
+            if (inputText.length === 0) {
+                autocompleteDiagnostico.classList.add('hidden');
+                return;
+            }
+
+            const suggestions = nandaDiagnoses.filter(d => d.toLowerCase().includes(inputText));
+
+            if (suggestions.length > 0) {
+                suggestions.forEach(suggestion => {
+                    const div = document.createElement('div');
+                    div.textContent = suggestion;
+                    div.className = 'autocomplete-suggestion';
+                    div.onclick = () => {
+                        inputDiagnostico.value = suggestion;
+                        autocompleteDiagnostico.innerHTML = '';
+                        autocompleteDiagnostico.classList.add('hidden');
+                    };
+                    autocompleteDiagnostico.appendChild(div);
+                });
+                autocompleteDiagnostico.classList.remove('hidden');
+            } else {
+                autocompleteDiagnostico.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.id !== 'input-diagnostico') {
+                autocompleteDiagnostico.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('input-diagnostico').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                adicionarItem('diagnostico');
+            }
+        });
+        document.getElementById('input-resultado').addEventListener('keypress', (e) => e.key === 'Enter' && adicionarItem('resultado'));
+        document.getElementById('input-intervencao').addEventListener('keypress', (e) => e.key === 'Enter' && adicionarItem('intervencao'));
+
+        function limparFormulario() {
+            // Removido o confirm() para evitar problemas em iframes
+            document.querySelectorAll('textarea, input[type="text"], input[type="number"], select').forEach(el => el.value = '');
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
+            document.querySelectorAll('ul').forEach(ul => ul.innerHTML = '');
+            changeTab(0);
+        }
+
+        function gerarRelatorio() {
+            try {
+                const printArea = document.getElementById('print-area');
+                
+                // Coleta de dados da Identificação
+                const nome = document.getElementById('nome-paciente').value;
+                const idade = document.getElementById('idade-paciente').value;
+                const sexo = document.getElementById('sexo-paciente').value;
+                const doencasCheckboxes = Array.from(document.querySelectorAll('input[name="doenca-base"]:checked')).map(el => el.value);
+                const outrasDoencas = document.getElementById('outras-doencas').value;
+                if(outrasDoencas) doencasCheckboxes.push(outrasDoencas);
+                const medicacoes = document.getElementById('medicacoes-continuas').value;
+                const alergias = document.getElementById('alergias').value;
+                const fumante = document.querySelector('input[name="fumante"]:checked')?.value || 'Não informado';
+                const etilista = document.querySelector('input[name="etilista"]:checked')?.value || 'Não informado';
+
+                // Coleta de dados das outras abas
+                const dadosSubjetivos = document.getElementById('dados-subjetivos').value;
+                const dadosObjetivos = document.getElementById('dados-objetivos').value;
+                const diagnosticos = Array.from(document.querySelectorAll('#lista-diagnostico li span')).map(el => el.textContent);
+                const resultados = Array.from(document.querySelectorAll('#lista-resultado li span')).map(el => el.textContent);
+                const intervencoes = Array.from(document.querySelectorAll('#lista-intervencao li span')).map(el => el.textContent);
+                const implementacao = document.getElementById('implementacao-resumo').value;
+                const avaliacao = document.getElementById('avaliacao-resultado').value;
+                const soapS = document.getElementById('soap-s').value;
+                const soapO = document.getElementById('soap-o').value;
+                const soapA = document.getElementById('soap-a').value;
+                const soapP = document.getElementById('soap-p').value;
+
+                const createSection = (title, content) => {
+                    if (!content || (Array.isArray(content) && content.length === 0)) return '';
+                    let contentHtml = '';
+                    if (Array.isArray(content)) {
+                        contentHtml = `<ul class="list-disc list-inside pl-4">${content.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                    } else {
+                        contentHtml = `<p class="whitespace-pre-wrap">${content}</p>`;
+                    }
+                    return `<div class="mb-6 break-inside-avoid">
+                                <h3 class="text-xl font-semibold border-b-2 border-cyan-600 pb-2 mb-3 text-cyan-700">${title}</h3>
+                                ${contentHtml}
+                            </div>`;
+                };
+
+                const createIdentificationSection = () => {
+                    let content = `
+                        ${nome ? `<p><strong>Nome:</strong> ${nome}</p>` : ''}
+                        ${idade ? `<p><strong>Idade:</strong> ${idade} anos</p>` : ''}
+                        ${sexo ? `<p><strong>Sexo:</strong> ${sexo}</p>` : ''}
+                        ${doencasCheckboxes.length > 0 ? `<p><strong>Doenças de Base:</strong> ${doencasCheckboxes.join(', ')}</p>` : ''}
+                        ${medicacoes ? `<p><strong>Medicações de Uso Contínuo:</strong> ${medicacoes}</p>` : ''}
+                        ${alergias ? `<p><strong>Alergias:</strong> ${alergias}</p>` : ''}
+                        <p><strong>Fumante:</strong> ${fumante}</p>
+                        <p><strong>Etilista:</strong> ${etilista}</p>
+                    `;
+                    return createSection('1. Identificação do Paciente', content);
+                };
+                
+                const createSoapSection = () => {
+                    if (!soapS && !soapO && !soapA && !soapP) return '';
+                    return `
+                        <div class="mb-6 break-inside-avoid">
+                            <h3 class="text-xl font-semibold border-b-2 border-cyan-600 pb-2 mb-3 text-cyan-700">7. SOAP</h3>
+                            ${soapS ? `<h4 class="font-bold mt-2">Subjetivo:</h4><p class="whitespace-pre-wrap pl-2">${soapS}</p>` : ''}
+                            ${soapO ? `<h4 class="font-bold mt-2">Objetivo:</h4><p class="whitespace-pre-wrap pl-2">${soapO}</p>` : ''}
+                            ${soapA ? `<h4 class="font-bold mt-2">Avaliação:</h4><p class="whitespace-pre-wrap pl-2">${soapA}</p>` : ''}
+                            ${soapP ? `<h4 class="font-bold mt-2">Plano:</h4><p class="whitespace-pre-wrap pl-2">${soapP}</p>` : ''}
+                        </div>
+                    `;
+                };
+
+                printArea.innerHTML = `
+                    <div class="p-4">
+                        <h1 class="text-3xl font-bold text-center mb-2 text-cyan-700">Relatório da Consulta de Enfermagem</h1>
+                        <p class="text-center text-gray-500 mb-8">Data de Geração: ${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR')}</p>
+                        
+                        ${createIdentificationSection()}
+                        ${createSection('2. Coleta de Dados - Subjetivos', dadosSubjetivos)}
+                        ${createSection('2. Coleta de Dados - Objetivos', dadosObjetivos)}
+                        ${createSection('3. Diagnósticos de Enfermagem', diagnosticos)}
+                        ${createSection('4. Planejamento - Resultados Esperados', resultados)}
+                        ${createSection('4. Planejamento - Intervenções', intervencoes)}
+                        ${createSection('5. Implementação', implementacao)}
+                        ${createSection('6. Avaliação (Evolução)', avaliacao)}
+                        ${createSoapSection()}
+                    </div>
+                `;
+                
+                printArea.classList.remove('hidden');
+                window.print();
+                printArea.classList.add('hidden');
+            } catch (error) {
+                console.error("Erro ao gerar relatório:", error);
+                // Opcional: Adicionar um feedback visual para o usuário
+            }
+        }
+    </script>
+</body>
+</html>
